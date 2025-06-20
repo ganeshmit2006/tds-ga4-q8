@@ -2,15 +2,20 @@ name: Daily Commit Automation
 
 on:
   schedule:
-    - cron: '30 5 * * *'  # Runs daily at 5:30 AM UTC
-  workflow_dispatch:       # Allows manual triggering
+    - cron: '30 5 * * *'  # Daily at 5:30 AM UTC (11:00 AM IST)
+  workflow_dispatch:       # Enable manual triggering
 
 jobs:
   daily-commit:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write      # Required for push access
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}  # Authentication token
 
       - name: Update timestamp
         run: echo "$(date)" > last_update.txt
@@ -20,7 +25,7 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
 
-      # Step containing your email ID as required
+      # Step containing your email ID in its name
       - name: Commit changes [23f2005219@ds.study.iitm.ac.in]
         run: |
           git add last_update.txt
